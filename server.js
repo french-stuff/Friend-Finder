@@ -1,13 +1,18 @@
-let express = require('express');
-let app = express();
-let path = require('path');
-var PORT = process.env.PORT || 3000;
-const htmlroute = require("./app/routing/htmlRoutes.js");
+var express = require("express");
+var bodyParser = require("body-parser");
+var path = require("path");
 
-app.use(htmlroute);
+var app = express();
+var port = process.env.PORT || 3000;
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.text());
+app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
+app.use(express.static("app/public"));
 
-app.listen(PORT, function() {
-  console.log(`Server listening on: http://localhost:${PORT}`);
-});
+require("./app/routing/api-routes")(app);
+require("./app/routing/html-routes")(app);
+
+app.listen(port, () => console.log("Listening on port %s", port));
